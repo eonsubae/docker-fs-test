@@ -1,33 +1,37 @@
 version: "3"
 services:
   frontend:
-    image: eonsubae/docker-frontend
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./frontend
     volumes:
       - /app/node_modules
       - ./frontend:/app
     stdin_open: true
-    mem_limit: 128m
 
   nginx: 
     restart: always
-    image: eonsubae/docker-nginx
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
     ports: 
-      - "80:80"
+      - "3000:80"
 
   backend:
-    image: eonsubae/docker-backend
+    build: 
+      dockerfile: Dockerfile.dev
+      context: ./backend
     container_name: app_backend
     volumes:
       - /app/node_modules
       - ./backend:/app
-    mem_limit: 128m
-    environment: 
-      MYSQL_HOST: $MYSQL_HOST 
-      MYSQL_USER: $MYSQL_USER 
-      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-      MYSQL_DATABASE: $MYSQL_DATABASE
-      MYSQL_PORT: $MYSQL_PORT   
-
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: testtesttest
+      MYSQL_DATABASE: myapp
+      MYSQL_PORT: 3306
+      
   # mysql:
   #   build: ./mysql
   #   restart: unless-stopped
@@ -38,5 +42,5 @@ services:
   #     - ./mysql/mysql_data:/var/lib/mysql
   #     - ./mysql/sqls/:/docker-entrypoint-initdb.d/
   #   environment:
-  #     MYSQL_ROOT_PASSWORD: eonsubae
+  #     MYSQL_ROOT_PASSWORD: testtesttest
   #     MYSQL_DATABASE: myapp
